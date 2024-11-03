@@ -1,0 +1,119 @@
+/* eslint-env browser */
+
+jQuery(document).ready(function() {
+
+    // Hide/show homepage content
+    if($("#nclclt-homepage").length){
+      $('#s-lg-guide-header').hide();
+    }
+
+    // Remove default search button text
+    $('#s-lg-guide-search-form button[type="submit"]').html('');
+    $('#s-lg-guide-search-form button[type="submit"]').attr('value', 'search this guide');
+
+
+    // Change style of back to top button
+    var scroll_button = $('#s-lib-scroll-top');
+    if(scroll_button.children('a').length){
+      scroll_button.children('a').html('<i class="fa fa-angle-double-up fa-3x"></i><div>Back<br>to top</div>');
+    } else {
+      scroll_button.html('<i class="fa fa-angle-double-up fa-3x"></i><div>Back<br>to top</div>');
+    }
+
+
+    // Create a phone number button
+    if($('.s-lib-profile-contact').length) {
+      var phoneNumber = $('.s-lib-profile-contact div:nth-of-type(2)').text();
+      if (phoneNumber.length) {
+          var html = '<a title="'+phoneNumber+'" id="profilePhoneNumber" href="tel:'+phoneNumber+'"><i class="fa fa-phone"></i></a>';
+          $('.s-lib-profile-contact').append(html);
+      }
+    }
+
+    // Create an email button
+    if($('.s-lib-profile-email').length){
+      var email = $('.s-lib-profile-email a').prop('href');
+      if (email.length){
+        var baseEmail = email.replace('mailto:','')
+        var html = '<a title="'+baseEmail+'" id="profileEmail" href="'+email+'"><span class="fa fa-envelope-o"></span></a>';
+        $('.s-lib-profile-contact').append(html);
+      }
+    }
+
+    // Change the style of the profile icons
+    if($('.s-lib-profile-container')){
+      $('.s-lib-profile-container a').each(function(){
+        if($(this).has('i').length || $(this).has('span').length){
+          var original = $(this).html().replace('fa ', 'fa fa-stack-1x ');
+          var newHtml = '<span class="fa-stack fa-lg"><span class="fa fa-circle fa-stack-2x"></span>' + original + '</span>';
+          $(this).html(newHtml);
+        }
+      })
+    }
+
+    // List of classes whose parent boxes should be highlighted
+    ['.nclclt-event-list'].forEach(function(cls){
+      $(cls).closest('.s-lib-box').addClass('highlighted-content-box');
+    });
+
+
+    // New Dropdown toggle
+    $('.s-lg-tabs-side .s-lg-tab-drop.dropdown-toggle').click(function() {
+      $(this).toggleClass('open').next().slideToggle();
+    });
+
+    $('.nclclt-navbar-open').click(function(){
+      var target = $(this).data('target');
+      $(target).removeClass('reduced');
+    });
+
+    $('.nclclt-navbar-close').click(function(){
+      $(this).closest('.nclclt-navbar-overlay').addClass('reduced');
+    });
+
+    $('#nclcltHeaderSearchToggle').click(function(e){
+      if($(this).hasClass('open')){
+        $(this).removeClass('open');
+        $(this).blur();
+      } else {
+        $(this).blur();
+        $(this).addClass('open');
+        setTimeout(function() { $('#nclcltHeaderSearchInput').focus() }, 200);
+      }
+    });
+
+
+    // Summon search box (old version, keeping for backward compatibility)
+    $('.summon-search-box form').on('submit', function(e) {
+        e.preventDefault();
+        var searchField = $(this).find('input[name="search_field"]:checked').val();
+        // var searchField = $(this).find('input[name="search_field"]:selected').val();
+        var query = $(this).find('input[name="query"]').val();
+        var action = $(this).prop('action');
+        query = encodeURIComponent(query);
+
+        if (searchField === 'title') {
+            query = '(TitleCombined:(' + query + '))';
+        } else if (searchField === 'author') {
+            query = '(AuthorCombined:(' + query + '))';
+        }
+        window.location = action + '?q=' + query;
+    });
+
+    // Summon search box
+    // with January 2020 website service updates
+    $('.summon-search-box-integrated form').on('submit', function(e) {
+        e.preventDefault();
+        var searchField = $('#search_field').val();
+        var query = $(this).find('input[name="query"]').val();
+        var action = $(this).prop('action');
+        query = encodeURIComponent(query);
+
+        if (searchField === 'title') {
+            query = '(TitleCombined:(' + query + '))';
+        } else if (searchField === 'author') {
+            query = '(AuthorCombined:(' + query + '))';
+        }
+        window.location = action + '?q=' + query;
+    });
+});
